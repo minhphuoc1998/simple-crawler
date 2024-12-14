@@ -126,7 +126,7 @@ class WebParser {
                             }
                             if (absoluteUrl != null) {
                                 if (config.Ignore?.Length > 0 && config.Ignore.Contains(absoluteUrl)) {
-                                    Console.WriteLine("Ignore: " + string.Join("\n", config.Ignore));
+                                    // Console.WriteLine("Ignore: " + string.Join("\n", config.Ignore));
                                     continue;
                                 } else {
                                     hrefs.Add(absoluteUrl);
