@@ -127,7 +127,6 @@ public static class ParseConfig
                 },
             ],
             Multiple = true,
-            Limit = 1,
             CallbackType = "VNEXPRESS_ARTICLE_LINK",
             Children = [
                 articleGroupSelector
