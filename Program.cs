@@ -41,6 +41,18 @@ public class Program
         });
         builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(
+                builder =>
+                {
+                    builder
+                        // .WithOrigins("http://localhost:3000")
+                        .AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+        });
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
@@ -54,6 +66,7 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+        app.UseCors();
 
         app.UseHttpsRedirection();
 
