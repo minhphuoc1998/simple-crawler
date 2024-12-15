@@ -42,8 +42,7 @@ class WebLoader
             if (config.Actions != null) {
                 foreach (var action in config.Actions) {
                     if (action is ClickAction clickAction) {
-                        Console.WriteLine("Begin Click Action");
-
+                        // Console.WriteLine("Begin Click Action");
                         if (clickAction.Selector != null) {
                             for (int i = 0; i < clickAction.ClickCount; i++) {
                                 IElementHandle? element = null;
@@ -64,24 +63,24 @@ class WebLoader
                                 }
                             }
                         }
-                        Console.WriteLine("End Click Action");
+                        // Console.WriteLine("End Click Action");
                     }
                     if (action is WaitAction waitAction) {
-                        Console.WriteLine("Begin Wait Action");
+                        // Console.WriteLine("Begin Wait Action");
                         if (waitAction.WaitForSelectors.Length > 0) {
                             foreach (var selector in waitAction.WaitForSelectors) {
-                                Console.WriteLine("Wait for selector: " + selector);
+                                // Console.WriteLine("Wait for selector: " + selector);
                                 try {
                                     await page.WaitForSelectorAsync(selector, new PageWaitForSelectorOptions {
                                         Timeout = waitAction.Timeout
                                     });
                                 } catch (Exception) {}
-                                Console.WriteLine("End Wait for selector: " + selector);
+                                // Console.WriteLine("End Wait for selector: " + selector);
                             }
                         } else if (waitAction.Time > 0) {
                             await page.WaitForTimeoutAsync(waitAction.Time);
                         }
-                        Console.WriteLine("End Wait Action");
+                        // Console.WriteLine("End Wait Action");
                     }
                     if (action is ScrollAction scrollAction) {
                         for (int i = 0; i < scrollAction.ScrollTimes; i++) {
@@ -90,7 +89,7 @@ class WebLoader
                         }
                     }
                     if (action is MouseMoveAction mouseMoveAction) {
-                        Console.WriteLine("Begin Mouse Move Action");
+                        // Console.WriteLine("Begin Mouse Move Action");
                         if (mouseMoveAction.ElementSelector != null) {
                             var element = await page.WaitForSelectorAsync(mouseMoveAction.ElementSelector, new PageWaitForSelectorOptions {
                                 Timeout = 10000
@@ -104,7 +103,7 @@ class WebLoader
                         } else {
                             await page.Mouse.MoveAsync(mouseMoveAction.X, mouseMoveAction.Y);
                         }
-                        Console.WriteLine("End Mouse Move Action");
+                        // Console.WriteLine("End Mouse Move Action");
                     }
                 }
             }
