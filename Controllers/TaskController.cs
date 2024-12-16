@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
 using WebApi.Services;
@@ -15,6 +16,7 @@ public class TaskController : ControllerBase
     }
 
     [HttpGet(Name = "GetTasks")]
+    [ServiceFilter(typeof(CustomAuthorizeFilter))]
     public async Task<ActionResult<Pagination<LoaderTaskDetail>>> GetTasks([FromQuery] TaskQueryParameters queryParameters)
     {
         var tasks = await _taskService.GetTaskDetails(queryParameters);

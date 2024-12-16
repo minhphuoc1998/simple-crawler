@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using Quartz;
 using WebApi.Jobs;
@@ -15,6 +16,11 @@ public class Program
         builder.Services.AddSingleton<LoaderTaskService>();
         builder.Services.Configure<ArticleDatabaseSettings>(builder.Configuration.GetSection(nameof(ArticleDatabaseSettings)));
         builder.Services.AddSingleton<ArticleService>();
+        builder.Services.Configure<UserDatabaseSettings>(builder.Configuration.GetSection(nameof(UserDatabaseSettings)));
+        builder.Services.AddSingleton<UserService>();
+        builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection(nameof(AuthSettings)));
+        builder.Services.AddSingleton<AuthService>();
+        builder.Services.AddScoped<CustomAuthorizeFilter>();
 
         builder.Services.AddTransient<SiteCrawler>();
         builder.Services.AddTransient<TaskHandler>();
@@ -59,6 +65,7 @@ public class Program
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
+        builder.Services.AddAuthorization();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
