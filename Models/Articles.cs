@@ -31,8 +31,8 @@ public class ArticleQueryParameters
     public string? Id { get; set; }
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 10;
-    public string SortBy { get; set; } = "PublishedAt";
-    public bool Ascending { get; set; } = true;
+    public string SortBy { get; set; } = "Like";
+    public bool Ascending { get; set; } = false;
 }
 
 public class ArticleUpdateParameters

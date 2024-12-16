@@ -18,7 +18,6 @@ public class ArticlesController : ControllerBase
     [HttpGet(Name = "GetArticles")]
     public async Task<ActionResult<List<Article>>> GetArticles([FromQuery] ArticleQueryParameters queryParameters)
     {
-        // Console.WriteLine($"Url: {queryParameters.Url}, Origin: {queryParameters.Origin}, Id: {queryParameters.Id}, Page: {queryParameters.Page}, PageSize: {queryParameters.PageSize}, SortBy: {queryParameters.SortBy}, Ascending: {queryParameters.Ascending}");
         var articles = await _articleService.GetArticles(queryParameters);
         return Ok(articles);
     }

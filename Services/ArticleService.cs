@@ -26,6 +26,7 @@ public class ArticleService
         {
             filters.Add(Builders<Article>.Filter.Eq(article => article.Origin, queryParameters.Origin));
         }
+        filters.Add(Builders<Article>.Filter.Gte(article => article.PublishedAt, DateTime.Now.AddDays(-7)));
         var sort = queryParameters.Ascending
             ? Builders<Article>.Sort.Ascending(queryParameters.SortBy)
             : Builders<Article>.Sort.Descending(queryParameters.SortBy);
