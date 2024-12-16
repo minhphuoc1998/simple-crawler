@@ -1,7 +1,6 @@
 using System.Text.Json;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
-using Microsoft.Playwright;
 using WebApi.Jobs.Config;
 using WebApi.Models;
 using WebApi.Services;
@@ -21,7 +20,6 @@ class WebParser {
             Url = url,
             Origin = new Uri(url).Host
         };
-        Console.WriteLine(JsonSerializer.Serialize(groupInfo));
         foreach (var child in selectorNodeConfig.Children ?? []) {
             switch (child.Type) {
             case ParseType.FIELD:
@@ -93,10 +91,12 @@ class WebParser {
         return groupInfo;
     }
 
-    public async Task ParseWithDom(
+    public async Task<string[]?> ParseWithDom(
         IDocument document,
         string url,
-        SelectorNodeConfig config
+        SelectorNodeConfig config,
+        string parentTaskId = "",
+        string parentPathId = ""
     ) {
         switch (config.Type) {
             case ParseType.LINK:
@@ -142,30 +142,42 @@ class WebParser {
                 }
                 // Console.WriteLine($"Found links with children {config.Children?.Length}: {string.Join("\n", hrefs)}");
                 if (hrefs.Count > 0 && config.Children?.Length > 0) {
+                    var tasks = new List<Task<LoaderTask>>();
                     foreach (var href in hrefs) {
-                        await _loaderTaskService.CreateTask(new LoaderTask {
+                        tasks.Add(_loaderTaskService.CreateTask(new LoaderTask {
                             Url = href,
-                            CallbackType = config.CallbackType
-                        });
+                            CallbackType = config.CallbackType,
+                            ParentTaskId = parentTaskId,
+                            PathId = parentPathId + parentTaskId
+                        }));
                     }
+                    var createdTasks = await Task.WhenAll(tasks);
+                    var taskIds = createdTasks.Select(task => task.Id!).ToList();
+                    return [.. taskIds];
                 }
                 break;
             case ParseType.PAGINATION:
                 var paginationConfig = config.PaginationConfig!;
                 if (paginationConfig.Type == "fixed-url-with-page") {
                     // Console.WriteLine($"Pagination Params: {paginationConfig.Begin} - {paginationConfig.End}");
+                    var tasks = new List<Task<LoaderTask>>();
                     for (int i = paginationConfig.Begin; i <= paginationConfig.End; i++) {
                         if (paginationConfig.PostFix != null) {
                             var pageUrl = $"{url}{paginationConfig.PostFix.Replace("{_0x0987654321}", i.ToString())}";
                             // Console.WriteLine($"Pagination URL: {pageUrl}");
-                            await _loaderTaskService.CreateTask(new LoaderTask {
+                            tasks.Add(_loaderTaskService.CreateTask(new LoaderTask {
                                 Url = pageUrl,
-                                CallbackType = config.CallbackType
-                            });
+                                CallbackType = config.CallbackType,
+                                ParentTaskId = parentTaskId,
+                                PathId = parentPathId + parentTaskId
+                            }));
                         }
                     }
+                    var createdTasks = await Task.WhenAll(tasks);
+                    var taskIds = createdTasks.Select(task => task.Id!).ToList();
+                    return [.. taskIds];
                 } else {
-
+                    // not implemented
                 }
                 break;
 
@@ -191,5 +203,6 @@ class WebParser {
                 }
                 break;
         }
+        return null;
     }
 }

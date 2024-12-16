@@ -18,32 +18,26 @@ public class SiteCrawler : IJob
     }
     public async Task Execute(IJobExecutionContext context)
     {
-        // Console.WriteLine("SiteCrawler is executing");
         var existingTuoitreTask = await _loaderTaskService.GetOne(new TaskQueryParameters {
-            Status = TaskStatus.RUNNING,
+            Statuses = [TaskStatus.RUNNING, TaskStatus.PENDING],
             Url = "https://tuoitre.vn/"
         });
-        if (existingTuoitreTask != null) {
-            // Console.WriteLine("Task already exists");
-            return;
+        if (existingTuoitreTask == null) {
+            await _loaderTaskService.CreateTask(new LoaderTask {
+                Url = "https://tuoitre.vn/",
+                CallbackType = "TUOITREVN_ROOT"
+            });
         }
-        await _loaderTaskService.CreateTask(new LoaderTask {
-            Url = "https://tuoitre.vn/",
-            CallbackType = "TUOITREVN_ROOT"
-        });
         
         var existingVnexpressTask = await _loaderTaskService.GetOne(new TaskQueryParameters {
-            Status = TaskStatus.RUNNING,
+            Statuses = [TaskStatus.RUNNING, TaskStatus.PENDING],
             Url = "https://vnexpress.net/"
         });
-        if (existingVnexpressTask != null) {
-            // Console.WriteLine("Task already exists");
-            return;
+        if (existingVnexpressTask == null) {
+            await _loaderTaskService.CreateTask(new LoaderTask {
+                Url = "https://vnexpress.net/",
+                CallbackType = "VNEXPRESS_ROOT"
+            });
         }
-        await _loaderTaskService.CreateTask(new LoaderTask {
-            Url = "https://vnexpress.net/",
-            CallbackType = "VNEXPRESS_ROOT"
-        });
-        // Console.WriteLine($"Task created {task.Id}");
     }
 }
