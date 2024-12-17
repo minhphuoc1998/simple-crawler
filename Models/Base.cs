@@ -1,3 +1,5 @@
+namespace WebApi.Models;
+
 public class Pagination<T>
 {
     public int CurrentPage { get; set; }

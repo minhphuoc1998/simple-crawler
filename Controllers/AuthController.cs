@@ -4,6 +4,8 @@ using WebApi.Services;
 
 namespace WebApi.Controllers;
 
+[ApiController]
+[Route("auth")]
 public class AuthController : ControllerBase
 {
     private readonly UserService _userService;
